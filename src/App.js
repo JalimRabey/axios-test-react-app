@@ -1,23 +1,39 @@
-import logo from './logo.svg';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import './App.css';
 
 function App() {
+  const [tarefas, setTarefas] = useState([]);
+  const [erro, setError] = useState(false);
+
+  const buscarTarefas = async () => {
+    try {
+      const response = await axios.get(
+        'https://jsonplaceholder.typicode.com/todos'
+      );
+      setTarefas(response.data);
+    } catch (error) {
+      setError(true);
+    }
+  };
+
+  useEffect(() => {
+    buscarTarefas();
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Tarefas</h1>
+
+      {erro && <h2>Algo de errado não deu certo</h2>}
+
+      <ul>
+        {tarefas.map((tarefa) => (
+          <li key={tarefa.id}>
+            <p>Titulo: {tarefa.title}</p>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
